@@ -1,21 +1,44 @@
-import { useEffect, useState } from "react";
-import Pizza from "./Pizza";
-import Cart from "./Cart";
+import { useEffect, useState, useContext } from "react";
+import { createLazyFileRoute } from "@tanstack/react-router";
+import Pizza from "../Pizza";
+import Cart from "../Cart";
+import { CartContext } from "../contexts";
+
+export const Route = createLazyFileRoute("/order")({
+  component: Order,
+});
 
 const intl = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
 
-export default function Order() {
+function Order() {
   //this is a named function declared differently than an arrow function
   //  ... because it will show in the stacktrace as Order()
   const [pizzaTypes, setPizzaTypes] = useState([]);
   const [pizzaType, setPizzaType] = useState("pepperoni");
   const [pizzaSize, setPizzaSize] = useState("M");
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useContext(CartContext);
   const [loading, setLoading] = useState(true);
   //Hooks cannot be inside conditionals (If statements etc.)
+
+  async function checkout() {
+    setLoading(true);
+  
+    await fetch("/api/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cart,
+      }),
+    });
+  
+    setCart([]);
+    setLoading(false);
+  }
 
   let price, selectedPizza;
 
@@ -124,7 +147,7 @@ export default function Order() {
           )}
         </form>
       </div>
-      {loading ? <h2>LOADING …</h2> : <Cart cart={cart} />}
+      {loading ? <h2>LOADING …</h2> : <Cart checkout={checkout} cart={cart} />}
     </div>
   );
 }
