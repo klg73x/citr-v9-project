@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
   server: {
@@ -15,8 +15,22 @@ export default defineConfig({
       },
     },
   },
-  plugins: [TanStackRouterVite({ target: 'react', autoCodeSplitting: true }), react()],
-  test:{
+  plugins: [
+    TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
+    react({
+      babel: {
+        plugins: [
+          [
+            "babel-plugin-react-compiler",
+            {
+              target: "19",
+            },
+          ],
+        ],
+      },
+    }),
+  ],
+  test: {
     environment: "happy-dom",
   },
 });

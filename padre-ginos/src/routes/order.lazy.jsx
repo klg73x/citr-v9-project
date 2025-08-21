@@ -25,7 +25,7 @@ function Order() {
 
   async function checkout() {
     setLoading(true);
-  
+
     await fetch("/api/order", {
       method: "POST",
       headers: {
@@ -35,7 +35,7 @@ function Order() {
         cart,
       }),
     });
-  
+
     setCart([]);
     setLoading(false);
   }
@@ -64,20 +64,14 @@ function Order() {
   }, []); //By putting this empty array in the call, it will only run once because that array will not change
   //If I wanted it to run if something else was selected I could put pizzaSize in there and
   //it would run if someone selected another pizzaSize!
-
+  function addToCart() {
+    setCart([...cart, { pizza: selectedPizza, size: pizzaSize, price }]);
+  }
   return (
     <div className="order-page">
       <div className="order">
         <h2>Create Order</h2>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setCart([
-              ...cart,
-              { pizza: selectedPizza, size: pizzaSize, price },
-            ]);
-          }}
-        >
+        <form action={addToCart}>
           <div>
             <div>
               <label htmlFor="pizza-type">Pizza Type</label>
